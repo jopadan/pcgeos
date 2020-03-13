@@ -32,9 +32,14 @@ win32LIBS	= $(.TARGET:H)/utils.lib  $(.TARGET:H)/compat.lib
 linuxLIBS	= $(.TARGET:H)/libutils.a  $(.TARGET:H)/libcompat.a
 .SUFFIXES	: .lib .a
 .PATH.lib	: ../utils $(INSTALL_DIR:H)/utils \
-		  ../compat $(INSTALL_DIR:H)/compat
+		  ../compat $(INSTALL_DIR:H)/compat \
+		  $(WATCOM)/lib386/linux \
+		  $(WATCOM)/lib386
+
 .PATH.a		: ../utils $(INSTALL_DIR:H)/utils \
-		  ../compat $(INSTALL_DIR:H)/compat
+		  ../compat $(INSTALL_DIR:H)/compat \
+		  $(WATCOM)/lib386/linux \
+		  $(WATCOM)/lib386
 #endif
 
 .PATH.h		: # clear this out for now
@@ -86,3 +91,16 @@ CFLAGS_COMMON  = -d2 -w3 -zp=1
 
 .c.i		:; $(CC) $(CFLAGS) -E $(.IMPSRC)
 .c.s		:; $(CC) $(CFLAGS) -S $(.IMPSRC)
+
+
+linux	: ${.TARGET:S%$%.md/printobj.%}    	    .JOIN
+${MACHINES:S%$%.md/vm.%g} : $(linuxLIBS) 
+	$(WLINK) $(CLINKFLAGS)  \
+			DEBUG ALL \
+			$(.ALLSRC:M*.o:S/^/file /g) \
+			$(.ALLSRC:M*.a:S/^/lib /g) \
+			library $(WATCOM)/lib386/linux/clib3r.lib \
+			library $(WATCOM)/lib386/math387r.lib \
+			library $(WATCOM)/lib386/emu387.lib \
+			FORMAT ELF \
+			$(XLINKFLAGS)

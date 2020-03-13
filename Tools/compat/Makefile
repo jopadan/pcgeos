@@ -31,7 +31,7 @@
 #include	<geos.mk>
 #include	<gpath.mk>
 
-MACHINES	=  sparc win32
+MACHINES	=  sparc linux win32
 MAKEFILE	= Makefile
 NAME		= compat
 SYSMAKEFILE	= tool.mk
@@ -39,6 +39,8 @@ TYPE		= library
 
 #if	defined(sun) && defined(sparc)
 DEFTARGET	= sparc
+#elif	defined(linux)
+DEFTARGET	= linux
 #elif	defined(sun)
 DEFTARGET	= sun3
 #elif   defined(isi)
@@ -56,6 +58,13 @@ sparcOBJS       = sparc.md/bcmp.o sparc.md/bcopy.o sparc.md/bzero.o\
                   sparc.md/getopt.o sparc.md/mkstemp.o sparc.md/pagesize.o\
                   sparc.md/queue.o
 sparcLIBS       =
+
+linuxSRCS       = $(MISRCS) linux.md/
+linuxOBJS       = linux.md/bcmp.o linux.md/bcopy.o linux.md/bzero.o\
+                  linux.md/compat.o linux.md/dirent.o linux.md/ffs.o\
+                  linux.md/getopt.o linux.md/mkstemp.o linux.md/pagesize.o\
+                  linux.md/queue.o
+linuxLIBS       =
 
 win32SRCS       = $(MISRCS) win32.md/
 win32OBJS       = win32.md/bcmp.obj win32.md/bcopy.obj win32.md/bzero.obj\
@@ -75,6 +84,10 @@ SUBDIRS         =
 
 #if	exists(sparc.md/dependencies.mk)
 #include	"sparc.md/dependencies.mk"
+#endif
+
+#if	exists(linux.md/dependencies.mk)
+#include	"linux.md/dependencies.mk"
 #endif
 
 #if	exists(win32.md/dependencies.mk)

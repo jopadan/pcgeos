@@ -34,7 +34,7 @@
 #include	<geos.mk>
 #include	<gpath.mk>
 
-MACHINES	=  sparc win32
+MACHINES	=  sparc win32 linux
 MAKEFILE	= Makefile
 NAME		= nmkmf
 SYSMAKEFILE	= tool.mk
@@ -46,11 +46,17 @@ DEFTARGET	= sparc
 DEFTARGET	= sun3
 #elif   defined(isi)
 DEFTARGET	= isi
+#elif   defined(linux)
+DEFTARGET       = linux
 #else
 DEFTARGET	= win32
 #endif
 
 MISRCS          = mkmf.c
+
+linuxSRCS     = $(MISRCS) linux.md/
+linuxOBJS     = linux.md/mkmf.o
+linuxLIBS     =
 
 sparcSRCS       = $(MISRCS) sparc.md/
 sparcOBJS       = sparc.md/mkmf.o
@@ -58,7 +64,7 @@ sparcLIBS       =
 
 win32SRCS       = $(MISRCS) win32.md/
 win32OBJS       = win32.md/mkmf.obj
-win32LIBS       =
+win32LIBS       = 
 
 
 SUBDIRS         = CVS
@@ -77,5 +83,8 @@ SUBDIRS         = CVS
 #include	"win32.md/dependencies.mk"
 #endif
 
+#if     exists(linux.md/dependencies.mk)
+#include "linux.md/dependencies.mk)"
+#endif
 
 # Allow mkmf

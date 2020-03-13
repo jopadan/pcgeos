@@ -31,7 +31,7 @@
 #include	<geos.mk>
 #include	<gpath.mk>
 
-MACHINES	=  sparc
+MACHINES	= linux sparc win32
 MAKEFILE	= Makefile
 NAME		= goc
 SYSMAKEFILE	= tool.mk
@@ -39,6 +39,8 @@ TYPE		= tool
 
 #if	defined(sun) && defined(sparc)
 DEFTARGET	= sparc
+#elif	defined(linux)
+DEFTARGET	= linux
 #elif	defined(sun)
 DEFTARGET	= sun3
 #elif   defined(isi)
@@ -59,6 +61,19 @@ sparcOBJS       = sparc.md/buf.o sparc.md/cond.o sparc.md/depends.o\
                   sparc.md/stringt.o sparc.md/strwid.o sparc.md/symbol.o
 sparcLIBS       =
 
+linuxSRCS       = $(MISRCS) linux.md/
+linuxOBJS       = linux.md/buf.o linux.md/cond.o linux.md/depends.o\
+                  linux.md/goc.o linux.md/map.o linux.md/output.o\
+                  linux.md/parse.o linux.md/scan.o linux.md/semantic.o\
+                  linux.md/stringt.o linux.md/strwid.o linux.md/symbol.o
+linuxLIBS       =
+
+win32SRCS       = $(MISRCS) win32.md/
+win32OBJS       = win32.md/buf.o win32.md/cond.o win32.md/depends.o\
+                  win32.md/goc.o win32.md/map.o win32.md/output.o\
+                  win32.md/parse.o win32.md/scan.o win32.md/semantic.o\
+                  win32.md/stringt.o win32.md/strwid.o win32.md/symbol.o
+win32LIBS       =
 
 SUBDIRS         = dos linux
 

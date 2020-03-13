@@ -34,7 +34,7 @@
 #include	<geos.mk>
 #include	<gpath.mk>
 
-MACHINES	=  sparc win32
+MACHINES	= linux sparc win32
 MAKEFILE	= Makefile
 NAME		= glue
 SYSMAKEFILE	= tool.mk
@@ -42,6 +42,8 @@ TYPE		= tool
 
 #if	defined(sun) && defined(sparc)
 DEFTARGET	= sparc
+#elif	defined(linux)
+DEFTARGET	= linux
 #elif	defined(sun)
 DEFTARGET	= sun3
 #elif   defined(isi)
@@ -68,6 +70,20 @@ sparcOBJS       = sparc.md/borland.o sparc.md/codeview.o sparc.md/com.o\
                   sparc.md/vm.o
 sparcLIBS       =
 
+linuxSRCS       = $(MISRCS) linux.md/
+linuxOBJS       = linux.md/borland.o linux.md/codeview.o linux.md/com.o\
+                  linux.md/exe.o linux.md/font.o linux.md/geo.o\
+                  linux.md/kernel.o linux.md/library.o linux.md/main.o\
+                  linux.md/msl.o linux.md/msobj.o linux.md/obj.o\
+                  linux.md/output.o linux.md/parse.o linux.md/pass1ms.o\
+                  linux.md/pass1vm.o linux.md/pass2ms.o linux.md/pass2vm.o\
+                  linux.md/segment.o linux.md/sym.o linux.md/vector.o\
+                  linux.md/vm.o
+
+linuxLIBS       = $(WATCOM)/lib386/linux/clib3r.lib\
+                  $(WATCOM)/lib386/emu387.lib\
+		  $(WATCOM)/lib386/math387r.lib
+
 win32SRCS       = $(MISRCS) win32.md/
 win32OBJS       = win32.md/borland.obj win32.md/codeview.obj\
                   win32.md/com.obj win32.md/exe.obj win32.md/font.obj\
@@ -89,6 +105,10 @@ SUBDIRS         = CVS dos win
 #include	<$(SYSMAKEFILE)>
 #endif
 
+#if     exists(linux.md/dependencies.mk)
+#include        "linux.md/dependencies.mk"
+#endif
+
 #if	exists(sparc.md/dependencies.mk)
 #include	"sparc.md/dependencies.mk"
 #endif
@@ -98,4 +118,33 @@ SUBDIRS         = CVS dos win
 #endif
 
 
+$(NAME).exe: $(win32SRCS) sprite.lib lst.lib
+		  %write pmake.lnk NAME   $@
+		  %write pmake.lnk SYSTEM NT_WIN
+		  %write pmake.lnk RU CON
+		  %write pmake.lnk libfile ../lib/sprite/sprite.lib
+		  %write pmake.lnk libfile ../lib/lst/lst.lib
+		  %write pmake.lnk library kernel32
+		  %write pmake.lnk FILE   {$(obj_files)}
+		  wlink  @pmake.lnk
+
+$(NAME).e: $(linuxSRCS)
+	%write $(NAME).lnk NAME   $@
+	%write $(NAME).lnk FORMAT ELF
+	%write $(NAME).lnk libfile ../lib/sprite/libsprite.a
+	%write $(NAME).lnk libfile ../lib/lst/liblst.a
+	%write $(NAME).lnk library $(%WATCOM)/lib386/linux/clib3r.lib
+	%write $(NAME).lnk library $(%WATCOM)/lib386/emu387.lib
+	%write $(NAME).lnk library $(%WATCOM)/lib386/math387r.lib
+	%write $(NAME).lnk FILE   {$(linuxSRCS)}
+	wlink  $(NAME).lnk
+
+install: $(NAME).exe $(NAME).e .procedure
+!ifdef linux
+  cp $(NAME).exe ../../../bin/$(NAME).exe
+  cp $(NAME).e ../../../bin/$(NAME)
+!else
+	copy $(NAME).exe ..\..\..\bin\$(NAME).exe
+	copy $(NAME).e ..\..\..\bin\$(NAME)
+!endif
 # Allow mkmf

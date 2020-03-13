@@ -34,7 +34,7 @@
 #include    <mem.h>
 
 #include    <assert.h>
-
+#define MemAlloc malloc
 typedef struct {
     void    	*addr;	    /* Where data be located */
     int	    	size;	    /* Size of block allocated */
